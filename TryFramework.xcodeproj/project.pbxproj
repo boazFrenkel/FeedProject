@@ -57,8 +57,7 @@
 		4C05028724EEFC9D00CEC059 = {
 			isa = PBXGroup;
 			children = (
-				4C0502AB24EEFCA900CEC059 /* FeedItem.swift */,
-				4C0502AD24EEFD5400CEC059 /* FeedLoader.swift */,
+				4C0502AF24EEFF7F00CEC059 /* Feed Feature */,
 				4C05029324EEFC9D00CEC059 /* TryFramework */,
 				4C05029E24EEFC9D00CEC059 /* TryFrameworkTests */,
 				4C05029224EEFC9D00CEC059 /* Products */,
@@ -90,6 +89,15 @@
 				4C0502A124EEFC9D00CEC059 /* Info.plist */,
 			);
 			path = TryFrameworkTests;
+			sourceTree = "<group>";
+		};
+		4C0502AF24EEFF7F00CEC059 /* Feed Feature */ = {
+			isa = PBXGroup;
+			children = (
+				4C0502AB24EEFCA900CEC059 /* FeedItem.swift */,
+				4C0502AD24EEFD5400CEC059 /* FeedLoader.swift */,
+			);
+			path = "Feed Feature";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
