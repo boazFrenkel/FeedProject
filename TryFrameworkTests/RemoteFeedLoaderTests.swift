@@ -7,28 +7,7 @@
 //
 
 import XCTest
-
-class RemoteFeedLoader {
-    var httpClient: HTTPClient
-    var url: URL
-    init(url: URL, httpClient: HTTPClient) {
-        self.url = url
-        self.httpClient = httpClient
-    }
-    
-    func load() {
-        // let url = URL(string: "https://blabla.com")
-        httpClient.get(from: url)//requestedURL = URL(string: "https://blabla.com")
-    }
-    //    func load(complition: @escaping (LoadFeedResult) -> Void) {
-    //        self.httpClient.requestedURL = URL()
-    //    }
-}
-
-protocol HTTPClient {
-    func get(from url: URL)
-    
-}
+@testable import TryFramework
 
 class RemoteFeedLoaderTests: XCTestCase {
     
@@ -38,10 +17,11 @@ class RemoteFeedLoaderTests: XCTestCase {
     }
     
     func test_load_requestDataFromURL() {
-        let (sut, client) = makeSUT()
+        let url = URL(string: "https://blabla.com")!
+        let (sut, client) = makeSUT(url: url)
         sut.load()
         
-        XCTAssertEqual(client.requestedURL, sut.url)
+        XCTAssertEqual(client.requestedURL, url)
     }
     
     //MARK: - Helpers
