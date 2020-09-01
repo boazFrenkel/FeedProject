@@ -7,6 +7,7 @@
 //
 
 import XCTest
+//@testable import TryFramework
 
 class RemoteFeedLoaderTests: XCTestCase {
     
@@ -35,16 +36,10 @@ class RemoteFeedLoaderTests: XCTestCase {
     func test_load_deliversErrorOnClientError() {
         let (sut, client) = makeSUT()
         
-        var capturedErrors = [RemoteFeedLoader.Error]()
-        let completion = { (error) in
-            capturedErrors.append(error)
-        }
-        sut.load(completion: completion)
-        
-        let clientError = RemoteFeedLoader.Error.connectivity
-        client.complete(with: clientError)
-        
-        XCTAssertEqual(capturedErrors, [.connectivity])
+        expect(sut: sut, toCompleteWithError: .connectivity, whenGiven: {
+            let clientError = NSError(domain: "error", code: 0)
+            client.complete(with: clientError)
+        })
     }
     
     func test_load_deliversErrorOnNon200HTTPResponse() {
@@ -52,21 +47,50 @@ class RemoteFeedLoaderTests: XCTestCase {
         
         let clientErrorCodes = [400, 201, 300, 500, 900, 199]
         clientErrorCodes.enumerated().forEach { index, code in
-            var capturedErrors = [RemoteFeedLoader.Error]()
-            let completion = { (error) in
-                capturedErrors.append(error)
-            }
-            sut.load(completion: completion)
-            client.complete(with: code, at: index)
-            XCTAssertEqual(capturedErrors, [.invalidData])
+            expect(sut: sut, toCompleteWithError: .invalidData, whenGiven: { client.complete(with: code, at: index) }
+            )
         }
     }
     
+    func test_load_deliversErrorOn200HTTPResponseWithInvalidJson() {
+        let (sut, client) = makeSUT()
+        
+        expect(sut: sut, toCompleteWithError: .invalidData,whenGiven: {
+            let invalidJson = Data("INVALID JSON".utf8)
+            client.complete(with: 200, data: invalidJson)
+        })
+    }
+    
+//    func test_load_deliversNoItemsOn200HTTPResponseWithEmptyJsonList() {
+//        let (sut, client) = makeSUT()
+//        var capturedItems = [FeedItem]
+//        expect(sut: sut, toCompleteWithError: .invalidData,whenGiven: {
+//            let invalidJson = Data("INVALID JSON".utf8)
+//            client.complete(with: 200, data: invalidJson)
+//        })
+//        
+//        
+//    }
     //MARK: - Helpers
     private func makeSUT(url: URL = URL(string: "https://blabla.com")!, client: HTTPClient = HTTPClientSpy()) -> (sut: RemoteFeedLoader, client: HTTPClientSpy) {
         let client = HTTPClientSpy()
         let remoteFeedLoader = RemoteFeedLoader(url: url, httpClient: client)
         return (remoteFeedLoader, client)
+    }
+    
+    private func expect(sut: RemoteFeedLoader,
+                        toCompleteWithError error: RemoteFeedLoader.Error,
+                        whenGiven action: () -> Void,
+                        file: StaticString = #file,
+                        line: UInt = #line) {
+        
+        var capturedResults = [RemoteFeedLoader.LoadFeedResult]()
+        let completion = { (error) in
+            capturedResults.append(error)
+        }
+        sut.load(completion: completion)
+        action()
+        XCTAssertEqual(capturedResults, [.failure(error)], file: file, line:  line)
     }
     
     private class HTTPClientSpy: HTTPClient {
@@ -84,14 +108,14 @@ class RemoteFeedLoaderTests: XCTestCase {
             self.messages[index].completion(result)
         }
         
-        func complete(with statusCode: Int, at index: Int = 0) {
+        func complete(with statusCode: Int, at index: Int = 0, data: Data = Data()) {
             
             let response = HTTPURLResponse(url: requestedURLs[index],
                                            statusCode: statusCode,
                                            httpVersion:nil,
                                            headerFields: nil
                 )!
-            let result = HTTPClientResult.success(response)
+            let result = HTTPClientResult.success(response, data)
             self.messages[index].completion(result)
         }
     }
