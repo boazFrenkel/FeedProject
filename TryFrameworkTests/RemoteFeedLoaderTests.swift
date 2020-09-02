@@ -9,6 +9,7 @@
 import XCTest
 //@testable import TryFramework
 
+typealias JSON = [String: AnyHashable]
 class RemoteFeedLoaderTests: XCTestCase {
     
     func test_init_doesNotRequestDataFromURL() {
@@ -71,6 +72,28 @@ class RemoteFeedLoaderTests: XCTestCase {
                 client.complete(with: 200, data: emptyListJsonData)
         })
     }
+    
+    func test_load_deliversItemsOn200HTTPResponseWithFullJsonList() {
+        let (sut, client) = makeSUT()
+        
+        let feedItem1 = FeedItem(id: UUID(), description: nil, location: nil, imageURL: URL(string: "https://google.com")!)
+        
+        let feedItem2 = FeedItem(id: UUID(), description: "description!!!!!", location: nil, imageURL: URL(string: "https://google.com")!)
+        //        let feedItems = feedItemsResponse(items: [feedItem1, feedItem2])
+        //        let encoder = JSONEncoder()
+        //        let json = try! encoder.encode(feedItems)
+        //
+        let arrayOfItems = [createFeedItemJson(feedItem: feedItem1),
+                            createFeedItemJson(feedItem: feedItem2)]
+        let items = ["items": arrayOfItems]
+        expect(sut: sut,
+               toCompleteWith: .success([feedItem1, feedItem2]),
+               whenGiven: {
+                
+                let jsonData = try! JSONSerialization.data(withJSONObject: items)
+                client.complete(with: 200, data: jsonData)
+        })
+    }
     //MARK: - Helpers
     private func makeSUT(url: URL = URL(string: "https://blabla.com")!, client: HTTPClient = HTTPClientSpy()) -> (sut: RemoteFeedLoader, client: HTTPClientSpy) {
         let client = HTTPClientSpy()
@@ -91,6 +114,19 @@ class RemoteFeedLoaderTests: XCTestCase {
         sut.load(completion: completion)
         action()
         XCTAssertEqual(capturedResults, [result], file: file, line:  line)
+    }
+    
+    private func createFeedItemJson(feedItem: FeedItem) -> JSON {
+        var json: JSON = ["id": "\(feedItem.id)", "image": "\(feedItem.imageURL)"]
+        
+        if feedItem.description != nil {
+            json["description"] = feedItem.description
+        }
+        
+        if feedItem.location != nil {
+            json["location"] = feedItem.location
+        }
+        return json
     }
     
     private class HTTPClientSpy: HTTPClient {
