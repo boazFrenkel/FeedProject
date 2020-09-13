@@ -7,9 +7,9 @@
 //
 
 import XCTest
-//@testable import TryFramework
+@testable import TryFramework
 
-typealias JSON = [String: AnyHashable]
+typealias JSON = [String: Any]
 class RemoteFeedLoaderTests: XCTestCase {
     
     func test_init_doesNotRequestDataFromURL() {
@@ -48,7 +48,8 @@ class RemoteFeedLoaderTests: XCTestCase {
         
         let clientErrorCodes = [400, 201, 300, 500, 900, 199]
         clientErrorCodes.enumerated().forEach { index, code in
-            expect(sut: sut, toCompleteWith: .failure(.invalidData), whenGiven: { client.complete(with: code, at: index) }
+            let json = makeItemsJson(items: [])
+            expect(sut: sut, toCompleteWith: .failure(.invalidData), whenGiven: { client.complete(with: code, at: index, data: json) }
             )
         }
     }
@@ -85,12 +86,12 @@ class RemoteFeedLoaderTests: XCTestCase {
         //
         let arrayOfItems = [createFeedItemJson(feedItem: feedItem1),
                             createFeedItemJson(feedItem: feedItem2)]
-        let items = ["items": arrayOfItems]
+        
         expect(sut: sut,
                toCompleteWith: .success([feedItem1, feedItem2]),
                whenGiven: {
                 
-                let jsonData = try! JSONSerialization.data(withJSONObject: items)
+                let jsonData = makeItemsJson(items: arrayOfItems)
                 client.complete(with: 200, data: jsonData)
         })
     }
@@ -117,16 +118,20 @@ class RemoteFeedLoaderTests: XCTestCase {
     }
     
     private func createFeedItemJson(feedItem: FeedItem) -> JSON {
-        var json: JSON = ["id": "\(feedItem.id)", "image": "\(feedItem.imageURL)"]
+        let json: JSON = ["id": "\(feedItem.id.uuidString)", "image": "\(feedItem.imageURL.absoluteString)", "description": feedItem.description as Any, "location": feedItem.location as Any ]
         
-        if feedItem.description != nil {
-            json["description"] = feedItem.description
+        let goodJ: JSON = json.compactMapValues { value in
+            
+            return value
+            
         }
-        
-        if feedItem.location != nil {
-            json["location"] = feedItem.location
-        }
-        return json
+        return goodJ
+    }
+    
+    private func makeItemsJson(items: [JSON]) -> Data {
+        let items = ["items": items]
+        let jsonData = try! JSONSerialization.data(withJSONObject: items)
+        return jsonData
     }
     
     private class HTTPClientSpy: HTTPClient {
@@ -144,13 +149,14 @@ class RemoteFeedLoaderTests: XCTestCase {
             self.messages[index].completion(result)
         }
         
-        func complete(with statusCode: Int, at index: Int = 0, data: Data = Data()) {
+        func complete(with statusCode: Int, at index: Int = 0, data: Data) {
             
             let response = HTTPURLResponse(url: requestedURLs[index],
                                            statusCode: statusCode,
                                            httpVersion:nil,
                                            headerFields: nil
                 )!
+            
             let result = HTTPClientResult.success(response, data)
             self.messages[index].completion(result)
         }
