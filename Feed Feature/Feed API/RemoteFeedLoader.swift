@@ -8,12 +8,16 @@
 
 import Foundation
 
-
-public protocol FeedLoader {
-    func load(complition: @escaping (RemoteFeedLoader.LoadFeedResult) -> Void)
+public enum LoadFeedResult {
+    case success([FeedItem])
+    case failure(Error)
 }
 
-public final class RemoteFeedLoader {
+public protocol FeedLoader {
+    func load(_ complition: @escaping (LoadFeedResult) -> Void)
+}
+
+public final class RemoteFeedLoader: FeedLoader {
     private let client: HTTPClient
     private let url: URL
     
@@ -22,17 +26,14 @@ public final class RemoteFeedLoader {
         case invalidData
     }
     
-    public enum LoadFeedResult: Equatable {
-        case success([FeedItem])
-        case failure(Error)
-    }
+
     
     public init(url: URL, httpClient: HTTPClient) {
         self.url = url
         self.client = httpClient
     }
     
-    public func load(completion: @escaping (LoadFeedResult) -> Void) {
+    public func load(_ completion: @escaping (LoadFeedResult) -> Void) {
         client.get(from: url) { (result) in
             
             switch result {
@@ -41,11 +42,11 @@ public final class RemoteFeedLoader {
                     let items = try FeedItemsMapper.map(data: data, response: response)
                     completion(.success(items))
                 } catch {
-                    completion(.failure(.invalidData))
+                    completion(.failure(Error.invalidData))
                 }
                 
             case .error:
-                completion(.failure(.connectivity))
+                completion(.failure(Error.connectivity))
             }
         }
     }
