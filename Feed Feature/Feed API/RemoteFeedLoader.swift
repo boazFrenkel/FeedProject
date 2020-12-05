@@ -8,6 +8,11 @@
 
 import Foundation
 
+
+public protocol FeedLoader {
+    func load(complition: @escaping (RemoteFeedLoader.LoadFeedResult) -> Void)
+}
+
 public final class RemoteFeedLoader {
     private let client: HTTPClient
     private let url: URL
