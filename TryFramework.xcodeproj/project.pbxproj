@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		4C05029B24EEFC9D00CEC059 /* TryFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C05029124EEFC9D00CEC059 /* TryFramework.framework */; };
-		4C0502A024EEFC9D00CEC059 /* TryFrameworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C05029F24EEFC9D00CEC059 /* TryFrameworkTests.swift */; };
 		4C0502A224EEFC9D00CEC059 /* TryFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C05029424EEFC9D00CEC059 /* TryFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4C0502AE24EEFD5400CEC059 /* FeedLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0502AD24EEFD5400CEC059 /* FeedLoader.swift */; };
 		4C0502B324EF054C00CEC059 /* RemoteFeedLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0502B224EF054C00CEC059 /* RemoteFeedLoaderTests.swift */; };
@@ -34,7 +33,6 @@
 		4C05029424EEFC9D00CEC059 /* TryFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TryFramework.h; sourceTree = "<group>"; };
 		4C05029524EEFC9D00CEC059 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4C05029A24EEFC9D00CEC059 /* TryFrameworkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TryFrameworkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		4C05029F24EEFC9D00CEC059 /* TryFrameworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryFrameworkTests.swift; sourceTree = "<group>"; };
 		4C0502A124EEFC9D00CEC059 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4C0502AD24EEFD5400CEC059 /* FeedLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoader.swift; sourceTree = "<group>"; };
 		4C0502B224EF054C00CEC059 /* RemoteFeedLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFeedLoaderTests.swift; sourceTree = "<group>"; };
@@ -95,7 +93,6 @@
 		4C05029E24EEFC9D00CEC059 /* TryFrameworkTests */ = {
 			isa = PBXGroup;
 			children = (
-				4C05029F24EEFC9D00CEC059 /* TryFrameworkTests.swift */,
 				4C0502B224EF054C00CEC059 /* RemoteFeedLoaderTests.swift */,
 				4CD98DCA257B99BF0080BFF6 /* HTTPClientTests.swift */,
 				4C0502A124EEFC9D00CEC059 /* Info.plist */,
@@ -247,7 +244,6 @@
 			files = (
 				4C0502B324EF054C00CEC059 /* RemoteFeedLoaderTests.swift in Sources */,
 				4CD98DCB257B99BF0080BFF6 /* HTTPClientTests.swift in Sources */,
-				4C0502A024EEFC9D00CEC059 /* TryFrameworkTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
