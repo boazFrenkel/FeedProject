@@ -8,6 +8,6 @@
 
 import Foundation
 
-//public protocol FeedLoader {
-//    func load(complition: @escaping (RemoteFeedLoader.LoadFeedResult) -> Void)
-//}
+public protocol FeedLoader {
+    func load(_ completion: @escaping (LoadFeedResult) -> Void)
+}

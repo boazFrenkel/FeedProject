@@ -8,20 +8,34 @@
 
 import Foundation
 
-public enum LoadFeedResult {
-    case success([FeedItem])
-    case failure(Error)
-}
 
-public protocol FeedLoader {
-    func load(_ complition: @escaping (LoadFeedResult) -> Void)
-}
+public typealias LoadFeedResult = Result<[FeedItem], Error>
 
-public final class RemoteFeedLoader: FeedLoader {
+public class RemoteFeedLoader: FeedLoader {
+    public func load(_ completion: @escaping (LoadFeedResult) -> Void) {
+        
+        client.get(from: url) { (result) in
+            
+            switch result {
+            case .success((let response, let data)):
+                do {
+                    let items = try FeedItemsMapper.map(data: data, response: response)
+                    completion(.success(items))
+                } catch {
+                    completion(.failure(RemoteError.invalidData))
+                }
+                
+            case .failure(_):
+                completion(.failure(RemoteError.connectivity))
+            }
+        }
+    }
+    
+
     private let client: HTTPClient
     private let url: URL
     
-    public enum Error: Swift.Error {
+    public enum RemoteError: Error {
         case connectivity
         case invalidData
     }
@@ -32,84 +46,5 @@ public final class RemoteFeedLoader: FeedLoader {
         self.url = url
         self.client = httpClient
     }
-    
-    public func load(_ completion: @escaping (LoadFeedResult) -> Void) {
-        client.get(from: url) { (result) in
-            
-            switch result {
-            case .success(let response, let data):
-                do {
-                    let items = try FeedItemsMapper.map(data: data, response: response)
-                    completion(.success(items))
-                } catch {
-                    completion(.failure(Error.invalidData))
-                }
-                
-            case .error:
-                completion(.failure(Error.connectivity))
-            }
-        }
-    }
-}
-
-
-public protocol HTTPClient {
-    func get(from url: URL, completion: @escaping (HTTPClientResult) -> Void)
-    
-}
-
-public enum HTTPClientResult {
-    case success(HTTPURLResponse, Data)
-    case error(Error)
-}
-
-
-private class FeedItemsMapper {
-    
-    private struct FeedItemDTO: Decodable {
-        public let id: UUID
-        public let description: String?
-        public let location: String?
-        public let image: URL
-        
-        public init(id: UUID, description: String?, location: String?, imageURL: URL) {
-            self.id = id
-            self.description = description
-            self.location = location
-            self.image = imageURL
-        }
-        
-        var feedItem: FeedItem {
-            return FeedItem(id: id, description: description, location: location, imageURL: image)
-        }
-        
-    }
-    
-    private struct FeedItemsResponse: Decodable {
-        var items: [FeedItemDTO]
-    }
-    
-    static func map(data: Data, response: HTTPURLResponse) throws -> [FeedItem] {
-        guard response.statusCode == 200 else {
-            throw RemoteFeedLoader.Error.invalidData
-        }
-        
-        let decoder = JSONDecoder()
-        let items = try decoder.decode(FeedItemsResponse.self, from: data).items
-        return items.map { $0.feedItem }
-    }
-}
-
-public struct FeedItem: Equatable, Codable {
-    public let id: UUID
-    public let description: String?
-    public let location: String?
-    public let imageURL: URL
-    
-    public init(id: UUID, description: String?, location: String?, imageURL: URL) {
-        self.id = id
-        self.description = description
-        self.location = location
-        self.imageURL = imageURL
-    }
+       
 }
