@@ -16,10 +16,19 @@
 		4CD98DCE257B99D30080BFF6 /* RemoteFeedLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0502B524F1546700CEC059 /* RemoteFeedLoader.swift */; };
 		4CD98DD4257B9A270080BFF6 /* FeedItemsMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD98DD3257B9A270080BFF6 /* FeedItemsMapper.swift */; };
 		4CD98DD8257B9A790080BFF6 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD98DD7257B9A790080BFF6 /* HTTPClient.swift */; };
+		4CD98DE6257D14730080BFF6 /* TryFrameworkAPIEndToEndTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD98DE5257D14730080BFF6 /* TryFrameworkAPIEndToEndTests.swift */; };
+		4CD98DE8257D14730080BFF6 /* TryFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C05029124EEFC9D00CEC059 /* TryFramework.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		4C05029C24EEFC9D00CEC059 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4C05028824EEFC9D00CEC059 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4C05029024EEFC9D00CEC059;
+			remoteInfo = TryFramework;
+		};
+		4CD98DE9257D14730080BFF6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4C05028824EEFC9D00CEC059 /* Project object */;
 			proxyType = 1;
@@ -41,6 +50,9 @@
 		4CD98DCA257B99BF0080BFF6 /* URLSessionHTTPClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClientTests.swift; sourceTree = "<group>"; };
 		4CD98DD3257B9A270080BFF6 /* FeedItemsMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedItemsMapper.swift; sourceTree = "<group>"; };
 		4CD98DD7257B9A790080BFF6 /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
+		4CD98DE3257D14730080BFF6 /* TryFrameworkAPIEndToEndTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TryFrameworkAPIEndToEndTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CD98DE5257D14730080BFF6 /* TryFrameworkAPIEndToEndTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryFrameworkAPIEndToEndTests.swift; sourceTree = "<group>"; };
+		4CD98DE7257D14730080BFF6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +71,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4CD98DE0257D14730080BFF6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CD98DE8257D14730080BFF6 /* TryFramework.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -68,6 +88,7 @@
 				4C0502AF24EEFF7F00CEC059 /* Feed Feature */,
 				4C05029324EEFC9D00CEC059 /* TryFramework */,
 				4C05029E24EEFC9D00CEC059 /* TryFrameworkTests */,
+				4CD98DE4257D14730080BFF6 /* TryFrameworkAPIEndToEndTests */,
 				4C05029224EEFC9D00CEC059 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -77,6 +98,7 @@
 			children = (
 				4C05029124EEFC9D00CEC059 /* TryFramework.framework */,
 				4C05029A24EEFC9D00CEC059 /* TryFrameworkTests.xctest */,
+				4CD98DE3257D14730080BFF6 /* TryFrameworkAPIEndToEndTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -118,6 +140,15 @@
 				4CD98DD7257B9A790080BFF6 /* HTTPClient.swift */,
 			);
 			path = "Feed API";
+			sourceTree = "<group>";
+		};
+		4CD98DE4257D14730080BFF6 /* TryFrameworkAPIEndToEndTests */ = {
+			isa = PBXGroup;
+			children = (
+				4CD98DE5257D14730080BFF6 /* TryFrameworkAPIEndToEndTests.swift */,
+				4CD98DE7257D14730080BFF6 /* Info.plist */,
+			);
+			path = TryFrameworkAPIEndToEndTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -170,13 +201,31 @@
 			productReference = 4C05029A24EEFC9D00CEC059 /* TryFrameworkTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		4CD98DE2257D14730080BFF6 /* TryFrameworkAPIEndToEndTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4CD98DEB257D14730080BFF6 /* Build configuration list for PBXNativeTarget "TryFrameworkAPIEndToEndTests" */;
+			buildPhases = (
+				4CD98DDF257D14730080BFF6 /* Sources */,
+				4CD98DE0257D14730080BFF6 /* Frameworks */,
+				4CD98DE1257D14730080BFF6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4CD98DEA257D14730080BFF6 /* PBXTargetDependency */,
+			);
+			name = TryFrameworkAPIEndToEndTests;
+			productName = TryFrameworkAPIEndToEndTests;
+			productReference = 4CD98DE3257D14730080BFF6 /* TryFrameworkAPIEndToEndTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		4C05028824EEFC9D00CEC059 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1160;
+				LastSwiftUpdateCheck = 1220;
 				LastUpgradeCheck = 1220;
 				ORGANIZATIONNAME = BoazFrenkel;
 				TargetAttributes = {
@@ -186,6 +235,9 @@
 					};
 					4C05029924EEFC9D00CEC059 = {
 						CreatedOnToolsVersion = 11.6;
+					};
+					4CD98DE2257D14730080BFF6 = {
+						CreatedOnToolsVersion = 12.2;
 					};
 				};
 			};
@@ -204,6 +256,7 @@
 			targets = (
 				4C05029024EEFC9D00CEC059 /* TryFramework */,
 				4C05029924EEFC9D00CEC059 /* TryFrameworkTests */,
+				4CD98DE2257D14730080BFF6 /* TryFrameworkAPIEndToEndTests */,
 			);
 		};
 /* End PBXProject section */
@@ -217,6 +270,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4C05029824EEFC9D00CEC059 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CD98DE1257D14730080BFF6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -247,6 +307,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4CD98DDF257D14730080BFF6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CD98DE6257D14730080BFF6 /* TryFrameworkAPIEndToEndTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -254,6 +322,11 @@
 			isa = PBXTargetDependency;
 			target = 4C05029024EEFC9D00CEC059 /* TryFramework */;
 			targetProxy = 4C05029C24EEFC9D00CEC059 /* PBXContainerItemProxy */;
+		};
+		4CD98DEA257D14730080BFF6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4C05029024EEFC9D00CEC059 /* TryFramework */;
+			targetProxy = 4CD98DE9257D14730080BFF6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -468,6 +541,42 @@
 			};
 			name = Release;
 		};
+		4CD98DEC257D14730080BFF6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 668NNJA66N;
+				INFOPLIST_FILE = TryFrameworkAPIEndToEndTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.boazfrenkel.TryFrameworkAPIEndToEndTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		4CD98DED257D14730080BFF6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 668NNJA66N;
+				INFOPLIST_FILE = TryFrameworkAPIEndToEndTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.boazfrenkel.TryFrameworkAPIEndToEndTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -494,6 +603,15 @@
 			buildConfigurations = (
 				4C0502A924EEFC9D00CEC059 /* Debug */,
 				4C0502AA24EEFC9D00CEC059 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4CD98DEB257D14730080BFF6 /* Build configuration list for PBXNativeTarget "TryFrameworkAPIEndToEndTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CD98DEC257D14730080BFF6 /* Debug */,
+				4CD98DED257D14730080BFF6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
