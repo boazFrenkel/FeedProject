@@ -26,6 +26,22 @@ class URLSessionHTTPClient {
 }
 class URLSessionHTTPClientTests: XCTestCase {
     
+    func test_getFromURL_performsGETRequestWithURL() {
+        URLProtocolStub.startInterceptingRequests()
+        let url = URL(string: "https://any-url.com")!
+        let sut = URLSessionHTTPClient()
+        
+        let expect = expectation(description: "Wait for request")
+        URLProtocolStub.observeRequests { (request) in
+            XCTAssertEqual(request.url, url)
+            XCTAssertEqual(request.httpMethod, "GET")
+            XCTAssertEqual(request.httpMethod, "GET")
+            expect.fulfill()
+        }
+        sut.get(from: url) { _ in }
+        wait(for: [expect], timeout: 1.0)
+        URLProtocolStub.stopInterceptingRequests()
+    }
     
     func test_getFromURL_failsOnRequestError() {
         URLProtocolStub.startInterceptingRequests()
@@ -54,7 +70,7 @@ class URLSessionHTTPClientTests: XCTestCase {
     // MARK: - Helpers
     private class URLProtocolStub: URLProtocol {
         private static var stub: Stub?
-        
+        private static var requestObserver: ((URLRequest) -> Void)?
         private struct Stub {
             let error: Error?
             let response: URLResponse?
@@ -65,6 +81,9 @@ class URLSessionHTTPClientTests: XCTestCase {
             stub = Stub(error: error, response: response, data: data)
         }
         
+        static func observeRequests(observer: @escaping (URLRequest) -> Void) {
+            URLProtocolStub.requestObserver = observer
+        }
         static func startInterceptingRequests() {
             URLProtocol.registerClass(URLProtocolStub.self)
         }
@@ -72,9 +91,11 @@ class URLSessionHTTPClientTests: XCTestCase {
         static func stopInterceptingRequests() {
             URLProtocol.unregisterClass(URLProtocolStub.self)
             stub = nil
+            requestObserver = nil
         }
         
         override class func canInit(with request: URLRequest) -> Bool {
+            requestObserver?(request)
             return true
         }
         
