@@ -18,6 +18,7 @@
 		4CD98DD8257B9A790080BFF6 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD98DD7257B9A790080BFF6 /* HTTPClient.swift */; };
 		4CD98DE6257D14730080BFF6 /* TryFrameworkAPIEndToEndTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD98DE5257D14730080BFF6 /* TryFrameworkAPIEndToEndTests.swift */; };
 		4CD98DE8257D14730080BFF6 /* TryFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C05029124EEFC9D00CEC059 /* TryFramework.framework */; };
+		4CD98E0A257EC0860080BFF6 /* URLSessionHTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD98E09257EC0860080BFF6 /* URLSessionHTTPClient.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		4CD98DE3257D14730080BFF6 /* TryFrameworkAPIEndToEndTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TryFrameworkAPIEndToEndTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CD98DE5257D14730080BFF6 /* TryFrameworkAPIEndToEndTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TryFrameworkAPIEndToEndTests.swift; sourceTree = "<group>"; };
 		4CD98DE7257D14730080BFF6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4CD98E09257EC0860080BFF6 /* URLSessionHTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClient.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,6 +140,7 @@
 				4C0502B524F1546700CEC059 /* RemoteFeedLoader.swift */,
 				4CD98DD3257B9A270080BFF6 /* FeedItemsMapper.swift */,
 				4CD98DD7257B9A790080BFF6 /* HTTPClient.swift */,
+				4CD98E09257EC0860080BFF6 /* URLSessionHTTPClient.swift */,
 			);
 			path = "Feed API";
 			sourceTree = "<group>";
@@ -295,6 +298,7 @@
 				4CD98DCE257B99D30080BFF6 /* RemoteFeedLoader.swift in Sources */,
 				4C0502AE24EEFD5400CEC059 /* FeedLoader.swift in Sources */,
 				4CD98DD4257B9A270080BFF6 /* FeedItemsMapper.swift in Sources */,
+				4CD98E0A257EC0860080BFF6 /* URLSessionHTTPClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

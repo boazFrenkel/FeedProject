@@ -162,7 +162,7 @@ class RemoteFeedLoaderTests: XCTestCase {
                                            headerFields: nil
                 )!
             
-            let result = HTTPClientResult.success((response, data))
+            let result = HTTPClientResult.success((data, response))
             self.messages[index].completion(result)
         }
     }
