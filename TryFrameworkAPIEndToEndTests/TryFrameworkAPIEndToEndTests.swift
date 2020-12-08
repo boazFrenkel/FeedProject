@@ -12,19 +12,8 @@ import TryFramework
 class TryFrameworkAPIEndToEndTests: XCTestCase {
 
     func test_endToEndTestServerGETFeedResult_matchesFixedTestAccountData() {
-        let client = URLSessionHTTPClient()
-        let testServerURL = URL(string: "https://someServerAddress")!
-        let loader = RemoteFeedLoader(url: testServerURL, httpClient: client)
        
-        let exp = expectation(description: "wait for load completion")
-        
-        var recievedResult: LoadFeedResult?
-        loader.load { result in
-           recievedResult = result
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 5.0)
+        let recievedResult = getFeedResult()
         switch recievedResult {
         case .success(let items):
             XCTAssertEqual(items.count, 8, "Expected 8 items in the test account feed")
@@ -63,6 +52,25 @@ class TryFrameworkAPIEndToEndTests: XCTestCase {
             "sfsdyytg6fsdf",
             "sfsd678867hfsdf",
         ][index])!
+    }
+    
+    private func getFeedResult(file: StaticString = #file, line: UInt = #line) -> LoadFeedResult? {
+        let client = URLSessionHTTPClient()
+        let testServerURL = URL(string: "https://someServerAddress")!
+        let loader = RemoteFeedLoader(url: testServerURL, httpClient: client)
+        trackForMemoryLeaks(loader, file: file, line: line)
+        trackForMemoryLeaks(client, file: file, line: line)
+        
+        let exp = expectation(description: "wait for load completion")
+        
+        var recievedResult: LoadFeedResult?
+        loader.load { result in
+           recievedResult = result
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 5.0)
+        return recievedResult
     }
     
     private func description(at index: Int) -> String {
