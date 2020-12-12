@@ -8,19 +8,6 @@
 
 import Foundation
 
-
-internal struct RemoteFeedItemDTO: Decodable {
-    public let id: UUID
-    public let description: String?
-    public let location: String?
-    public let image: URL
-//
-//    var feedItem: FeedItem {
-//        return FeedItem(id: id, description: description, location: location, imageURL: image)
-//    }
-    
-}
-
 internal final class FeedItemsMapper {
     
     private struct FeedItemsResponse: Decodable {
