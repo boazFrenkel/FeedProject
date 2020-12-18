@@ -33,8 +33,8 @@ class TryFrameworkAPIEndToEndTests: XCTestCase {
        
     }
     
-    private func expectedItem(at index: Int) -> FeedItem {
-        return FeedItem(
+    private func expectedItem(at index: Int) -> FeedImage {
+        return FeedImage(
             id: id(at: index),
             description: description(at: index),
             location: location(at: index),
@@ -56,7 +56,7 @@ class TryFrameworkAPIEndToEndTests: XCTestCase {
         return UUID(uuidString: uuid)!
     }
     
-    private func getFeedResult(file: StaticString = #file, line: UInt = #line) -> LoadFeedResult? {
+    private func getFeedResult(file: StaticString = #file, line: UInt = #line) -> FeedLoader.Result? {
         let client = URLSessionHTTPClient()
         let testServerURL = URL(string: "https://static1.squarespace.com/static/5891c5b8d1758ec68ef5dbc2/t/5c52cdd0b8a045df091d2fff/1548930512083/feed-case-study-test-api-feed.json")!
         let loader = RemoteFeedLoader(url: testServerURL, httpClient: client)
@@ -65,7 +65,7 @@ class TryFrameworkAPIEndToEndTests: XCTestCase {
         
         let exp = expectation(description: "wait for load completion")
         
-        var recievedResult: LoadFeedResult?
+        var recievedResult: FeedLoader.Result?
         loader.load { result in
            recievedResult = result
             exp.fulfill()

@@ -29,3 +29,76 @@ public class URLSessionHTTPClient: HTTPClient {
         }.resume()
     }
 }
+
+
+/*
+ IF we want a moya http client:
+
+ public class MoyaHTTPClient: HTTPClient {
+
+     private let provider: MoyaProvider<FeedProvider>
+     
+     public init(provider: MoyaProvider<FeedProvider> = MoyaProvider<FeedProvider>(plugins: [NetworkLoggerPlugin.init()])) {
+         self.provider = provider
+     }
+     
+     private struct UnexpectedValuesRepresentation: Error {}
+     
+     public func get(from url: URL, completion: @escaping (HTTPClientResult) -> Void) {
+         provider.request(.getFeedItems) { result in
+             switch result {
+             case .success(let response):
+                 guard let httpResponse = response.response else {
+                     return completion(.failure(UnexpectedValuesRepresentation()))
+                 }
+                 completion(.success((response.data, httpResponse)))
+             case .failure(let error):
+                 completion(.failure(error))
+             }
+         }
+     }
+ }
+
+ public enum FeedProvider {
+     case getFeedItems
+     
+ }
+
+ extension FeedProvider: TargetType {
+     
+     public var baseURL: URL {
+         switch self {
+         case .getFeedItems:
+             return URL(string: "Feed base url")!
+         }
+     }
+     
+     public var path: String {
+         return "getFeedItems path"
+     }
+     
+     public var method: Moya.Method {
+         return .get
+     }
+     
+     public var task: Task {
+         switch self {
+         case .getFeedItems:
+             return .requestPlain
+         }
+     }
+     
+     public var headers: [String: String]? {
+         return [:]
+     }
+     
+     public var validationType: ValidationType {
+         return .successCodes
+     }
+     
+     public var sampleData: Data {
+         return Data()
+     }
+ }
+ 
+*/

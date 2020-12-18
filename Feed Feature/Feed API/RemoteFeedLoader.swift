@@ -8,9 +8,6 @@
 
 import Foundation
 
-
-public typealias LoadFeedResult = Result<[FeedItem], Error>
-
 public class RemoteFeedLoader: FeedLoader {
     private let client: HTTPClient
     private let url: URL
@@ -25,7 +22,7 @@ public class RemoteFeedLoader: FeedLoader {
         self.client = httpClient
     }
     
-    public func load(_ completion: @escaping (LoadFeedResult) -> Void) {
+    public func load(_ completion: @escaping (FeedLoader.Result) -> Void) {
         
         client.get(from: url) { (result) in
             
@@ -39,7 +36,7 @@ public class RemoteFeedLoader: FeedLoader {
         }
     }
     
-    private static func map(_ data: Data, from response: HTTPURLResponse) -> LoadFeedResult {
+    private static func map(_ data: Data, from response: HTTPURLResponse) -> FeedLoader.Result {
         do {
             let items = try FeedItemsMapper.map(data: data, response: response)
             return .success(items.toModels())
@@ -52,7 +49,7 @@ public class RemoteFeedLoader: FeedLoader {
 
 
 private extension Array where Element == RemoteFeedItemDTO {
-    func toModels() -> [FeedItem] {
-        return map { FeedItem(id: $0.id, description: $0.description, location: $0.location, imageURL: $0.image) }
+    func toModels() -> [FeedImage] {
+        return map { FeedImage(id: $0.id, description: $0.description, location: $0.location, imageURL: $0.image) }
     }
 }
