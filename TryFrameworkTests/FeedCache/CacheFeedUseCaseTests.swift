@@ -24,7 +24,13 @@ class LocalFeedLoader {
         store.deleteCachedFeed {[weak self] error in
             guard let self = self else { return }
             if error == nil {
-                self.store.inserItems(items: items, timestemp: self.currentDate())
+                self.store.inserItems(items: items, timestemp: self.currentDate(), completion: completion)//) { error in
+                  //  if error == nil {
+                  //      completion(nil)
+                  //  } else {
+                  //      completion(error)
+                  //  }
+               // }
             } else {
                 completion(error)
             }
@@ -35,6 +41,7 @@ class LocalFeedLoader {
 
 class FeedStore {
     typealias DeletionCompletion = (Error?) -> Void
+    typealias InsertionCompletion = (Error?) -> Void
     
     enum RecievedMessage: Equatable {
         case deleteCachedFeed
@@ -43,13 +50,15 @@ class FeedStore {
     
     private(set) var recievedMessages = [RecievedMessage]()
     private var deletionCompletions: [DeletionCompletion] = []
+    private var insertionCompletions: [InsertionCompletion] = []
     
     func deleteCachedFeed(completion: @escaping DeletionCompletion) {
         self.deletionCompletions.append(completion)
         recievedMessages.append(.deleteCachedFeed)
     }
     
-    func inserItems(items: [FeedImage], timestemp: Date) {
+    func inserItems(items: [FeedImage], timestemp: Date, completion: @escaping InsertionCompletion) {
+        insertionCompletions.append(completion)
         recievedMessages.append(.insertItems(items, timestemp))
     }
     
@@ -59,6 +68,14 @@ class FeedStore {
     
     func completeDeletionSuccessfuly(at index: Int = 0) {
         deletionCompletions[index](nil)
+    }
+    
+    func completeInsertionSuccessfuly(at index: Int = 0) {
+        insertionCompletions[index](nil)
+    }
+    
+    func completeInsertion(with error: Error, at index: Int = 0) {
+        insertionCompletions[index](error)
     }
 }
 
@@ -96,21 +113,31 @@ class CacheFeedUseCaseTests: XCTestCase {
     }
     
     func test_save_failsOnDeletionError() {
-        let items = [uniqueItem(), uniqueItem()]
         let (sut, store) = makeSUT()
         let deletionError = anyNSError()
 
-        let exp = expectation(description: "wait for save completion")
-        var recievedError: Error?
-        sut.save(items: items) { error in
-            recievedError = error
-            exp.fulfill()
+        expect(sut, toCompleteWithError: deletionError) {
+            store.completeDeletion(with: deletionError)
         }
-        store.completeDeletion(with: deletionError)
-        wait(for: [exp], timeout: 0.1)
-        
+    }
+    
+    func test_save_failsOnInsertionError() {
+        let (sut, store) = makeSUT()
+        let insertionError = anyNSError()
 
-        XCTAssertEqual(recievedError as NSError?, deletionError)
+        expect(sut, toCompleteWithError: insertionError) {
+            store.completeDeletionSuccessfuly()
+            store.completeInsertion(with: insertionError)
+        }
+    }
+    
+    func test_save_succeedsOnSuccessfulInsertion() {
+        let (sut, store) = makeSUT()
+
+        expect(sut, toCompleteWithError: nil) {
+            store.completeDeletionSuccessfuly()
+            store.completeInsertionSuccessfuly()
+        }
     }
     
     // MARK: - Helpers
@@ -124,6 +151,22 @@ class CacheFeedUseCaseTests: XCTestCase {
         return (sut, store)
     }
     
+    private func expect(_ sut: LocalFeedLoader, toCompleteWithError expectedError: NSError?, when action: () -> Void, file: StaticString = #file, line: UInt = #line) {
+
+        let exp = expectation(description: "wait for save completion")
+        var recievedError: Error?
+        
+        sut.save(items: [uniqueItem()]) { error in
+            recievedError = error
+            exp.fulfill()
+        }
+        
+        action()
+        wait(for: [exp], timeout: 1.0)
+        
+
+        XCTAssertEqual(recievedError as NSError?, expectedError, file: file, line: line)
+    }
     private func uniqueItem() -> FeedImage {
         return FeedImage(id: UUID(), description: "some description", location: "some location", imageURL: anyURL())
     }
