@@ -39,44 +39,12 @@ class LocalFeedLoader {
     }
 }
 
-class FeedStore {
+protocol FeedStore {
     typealias DeletionCompletion = (Error?) -> Void
     typealias InsertionCompletion = (Error?) -> Void
     
-    enum RecievedMessage: Equatable {
-        case deleteCachedFeed
-        case insertItems( [FeedImage], Date)
-    }
-    
-    private(set) var recievedMessages = [RecievedMessage]()
-    private var deletionCompletions: [DeletionCompletion] = []
-    private var insertionCompletions: [InsertionCompletion] = []
-    
-    func deleteCachedFeed(completion: @escaping DeletionCompletion) {
-        self.deletionCompletions.append(completion)
-        recievedMessages.append(.deleteCachedFeed)
-    }
-    
-    func inserItems(items: [FeedImage], timestemp: Date, completion: @escaping InsertionCompletion) {
-        insertionCompletions.append(completion)
-        recievedMessages.append(.insertItems(items, timestemp))
-    }
-    
-    func completeDeletion(with error: Error, at index: Int = 0) {
-        deletionCompletions[index](error)
-    }
-    
-    func completeDeletionSuccessfuly(at index: Int = 0) {
-        deletionCompletions[index](nil)
-    }
-    
-    func completeInsertionSuccessfuly(at index: Int = 0) {
-        insertionCompletions[index](nil)
-    }
-    
-    func completeInsertion(with error: Error, at index: Int = 0) {
-        insertionCompletions[index](error)
-    }
+    func deleteCachedFeed(completion: @escaping DeletionCompletion)
+    func inserItems(items: [FeedImage], timestemp: Date, completion: @escaping InsertionCompletion)
 }
 
 class CacheFeedUseCaseTests: XCTestCase {
@@ -141,9 +109,8 @@ class CacheFeedUseCaseTests: XCTestCase {
     }
     
     // MARK: - Helpers
-    
-    private func makeSUT(currentDate: @escaping () -> Date = Date.init, file: StaticString = #file, line: UInt = #line) -> (sut: LocalFeedLoader, store: FeedStore) {
-        let store = FeedStore()
+    private func makeSUT(currentDate: @escaping () -> Date = Date.init, file: StaticString = #file, line: UInt = #line) -> (sut: LocalFeedLoader, store: FeedStoreSpy) {
+        let store = FeedStoreSpy()
         let sut = LocalFeedLoader(store: store, currentDate: currentDate)
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(store, file: file, line: line)
@@ -167,6 +134,45 @@ class CacheFeedUseCaseTests: XCTestCase {
 
         XCTAssertEqual(recievedError as NSError?, expectedError, file: file, line: line)
     }
+    
+    private class FeedStoreSpy: FeedStore {
+        
+        enum RecievedMessage: Equatable {
+            case deleteCachedFeed
+            case insertItems( [FeedImage], Date)
+        }
+        
+        private(set) var recievedMessages = [RecievedMessage]()
+        private var deletionCompletions: [FeedStore.DeletionCompletion] = []
+        private var insertionCompletions: [FeedStore.InsertionCompletion] = []
+        
+        func deleteCachedFeed(completion: @escaping FeedStore.DeletionCompletion) {
+            self.deletionCompletions.append(completion)
+            recievedMessages.append(.deleteCachedFeed)
+        }
+        
+        func inserItems(items: [FeedImage], timestemp: Date, completion: @escaping FeedStore.InsertionCompletion) {
+            insertionCompletions.append(completion)
+            recievedMessages.append(.insertItems(items, timestemp))
+        }
+        
+        func completeDeletion(with error: Error, at index: Int = 0) {
+            deletionCompletions[index](error)
+        }
+        
+        func completeDeletionSuccessfuly(at index: Int = 0) {
+            deletionCompletions[index](nil)
+        }
+        
+        func completeInsertionSuccessfuly(at index: Int = 0) {
+            insertionCompletions[index](nil)
+        }
+        
+        func completeInsertion(with error: Error, at index: Int = 0) {
+            insertionCompletions[index](error)
+        }
+    }
+    
     private func uniqueItem() -> FeedImage {
         return FeedImage(id: UUID(), description: "some description", location: "some location", imageURL: anyURL())
     }
