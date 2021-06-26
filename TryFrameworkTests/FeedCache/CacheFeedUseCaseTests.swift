@@ -20,7 +20,7 @@ class LocalFeedLoader {
         self.currentDate = currentDate
     }
     
-    func save(items: [FeedImage], completion: @escaping SaveCompletion) {
+    func save(items: [FeedItem], completion: @escaping SaveCompletion) {
         store.deleteCachedFeed {[weak self] error in
             guard let self = self else { return }
             if let cacheDeletionError = error {
@@ -31,8 +31,8 @@ class LocalFeedLoader {
         }
     }
     
-    private func cache(_ items: [FeedImage], with completion: @escaping SaveCompletion) {
-        self.store.inserItems(items: items, timestemp: self.currentDate()) {[weak self] error in
+    private func cache(_ items: [FeedItem], with completion: @escaping SaveCompletion) {
+        self.store.inserItems(items: items.toLocale(), timestemp: self.currentDate()) {[weak self] error in
             if self == nil { return }
             completion(error)
         }
@@ -44,7 +44,7 @@ protocol FeedStore {
     typealias InsertionCompletion = (Error?) -> Void
     
     func deleteCachedFeed(completion: @escaping DeletionCompletion)
-    func inserItems(items: [FeedImage], timestemp: Date, completion: @escaping InsertionCompletion)
+    func inserItems(items: [LocalFeedItem], timestemp: Date, completion: @escaping InsertionCompletion)
 }
 
 class CacheFeedUseCaseTests: XCTestCase {
@@ -73,11 +73,12 @@ class CacheFeedUseCaseTests: XCTestCase {
     func test_save_requestsNewCacheInsertionWithTimestempOnSuccessfulDeletion() {
         let timestemp = Date()
         let items = [uniqueItem(), uniqueItem()]
+        let localItems = items.toLocale()
         let (sut, store) = makeSUT(currentDate: { timestemp })
         sut.save(items: items) { _ in }
         store.completeDeletionSuccessfuly()
         
-        XCTAssertEqual(store.recievedMessages, [.deleteCachedFeed, .insertItems(items, timestemp)])
+        XCTAssertEqual(store.recievedMessages, [.deleteCachedFeed, .insertItems(localItems, timestemp)])
     }
     
     func test_save_failsOnDeletionError() {
@@ -168,7 +169,7 @@ class CacheFeedUseCaseTests: XCTestCase {
         
         enum RecievedMessage: Equatable {
             case deleteCachedFeed
-            case insertItems( [FeedImage], Date)
+            case insertItems( [LocalFeedItem], Date)
         }
         
         private(set) var recievedMessages = [RecievedMessage]()
@@ -180,7 +181,7 @@ class CacheFeedUseCaseTests: XCTestCase {
             recievedMessages.append(RecievedMessage.deleteCachedFeed)
         }
         
-        func inserItems(items: [FeedImage], timestemp: Date, completion: @escaping FeedStore.InsertionCompletion) {
+        func inserItems(items: [LocalFeedItem], timestemp: Date, completion: @escaping FeedStore.InsertionCompletion) {
             insertionCompletions.append(completion)
             recievedMessages.append(.insertItems(items, timestemp))
         }
@@ -202,8 +203,32 @@ class CacheFeedUseCaseTests: XCTestCase {
         }
     }
     
-    private func uniqueItem() -> FeedImage {
-        return FeedImage(id: UUID(), description: "some description", location: "some location", imageURL: anyURL())
+    private func uniqueItem() -> FeedItem {
+        return FeedItem(id: UUID(), description: "some description", location: "some location", imageURL: anyURL())
     }
     
+}
+
+class LocalFeedItem: Equatable {
+    static func == (lhs: LocalFeedItem, rhs: LocalFeedItem) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    public let id: UUID
+    public let description: String?
+    public let location: String?
+    public let imageURL: URL
+    
+    public init(id: UUID, description: String?, location: String?, imageURL: URL) {
+        self.id = id
+        self.description = description
+        self.location = location
+        self.imageURL = imageURL
+    }
+}
+
+private extension Array where Element == FeedItem {
+    func toLocale() -> [LocalFeedItem] {
+        return map { LocalFeedItem(id: $0.id, description: $0.description, location: $0.location, imageURL: $0.imageURL)}
+    }
 }

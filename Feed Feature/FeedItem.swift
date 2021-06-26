@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct FeedImage: Equatable, Codable {
+public struct FeedItem: Equatable {
     public let id: UUID
     public let description: String?
     public let location: String?
