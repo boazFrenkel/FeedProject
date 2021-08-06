@@ -9,43 +9,7 @@
 import XCTest
 import TryFramework
 
-class LocalFeedLoader {
-    typealias SaveCompletion = (Error?) -> Void
-    
-    private let store: FeedStore
-    private let currentDate: () -> Date
-    
-    init(store: FeedStore, currentDate: @escaping () -> Date) {
-        self.store = store
-        self.currentDate = currentDate
-    }
-    
-    func save(items: [FeedItem], completion: @escaping SaveCompletion) {
-        store.deleteCachedFeed {[weak self] error in
-            guard let self = self else { return }
-            if let cacheDeletionError = error {
-                completion(cacheDeletionError)
-            } else {
-                self.cache(items, with: completion)
-            }
-        }
-    }
-    
-    private func cache(_ items: [FeedItem], with completion: @escaping SaveCompletion) {
-        self.store.inserItems(items: items.toLocale(), timestemp: self.currentDate()) {[weak self] error in
-            if self == nil { return }
-            completion(error)
-        }
-    }
-}
 
-protocol FeedStore {
-    typealias DeletionCompletion = (Error?) -> Void
-    typealias InsertionCompletion = (Error?) -> Void
-    
-    func deleteCachedFeed(completion: @escaping DeletionCompletion)
-    func inserItems(items: [LocalFeedItem], timestemp: Date, completion: @escaping InsertionCompletion)
-}
 
 class CacheFeedUseCaseTests: XCTestCase {
     
@@ -218,26 +182,4 @@ class CacheFeedUseCaseTests: XCTestCase {
     
 }
 
-class LocalFeedItem: Equatable {
-    static func == (lhs: LocalFeedItem, rhs: LocalFeedItem) -> Bool {
-        return lhs.id == rhs.id
-    }
-    
-    public let id: UUID
-    public let description: String?
-    public let location: String?
-    public let imageURL: URL
-    
-    public init(id: UUID, description: String?, location: String?, imageURL: URL) {
-        self.id = id
-        self.description = description
-        self.location = location
-        self.imageURL = imageURL
-    }
-}
 
-private extension Array where Element == FeedItem {
-    func toLocale() -> [LocalFeedItem] {
-        return map { LocalFeedItem(id: $0.id, description: $0.description, location: $0.location, imageURL: $0.imageURL)}
-    }
-}
