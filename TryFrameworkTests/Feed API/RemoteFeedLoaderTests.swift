@@ -77,11 +77,11 @@ class RemoteFeedLoaderTests: XCTestCase {
     func test_load_deliversItemsOn200HTTPResponseWithFullJsonList() {
         let (sut, client) = makeSUT()
         
-        let feedItem1 = FeedItem(id: UUID(), description: nil, location: nil, imageURL: URL(string: "https://google.com")!)
+        let feedItem1 = FeedImage(id: UUID(), description: nil, location: nil, url: URL(string: "https://google.com")!)
         
-        let feedItem2 = FeedItem(id: UUID(), description: "description!!!!!", location: nil, imageURL: URL(string: "https://google.com")!)
-        let arrayOfItems = [createFeedItemJson(feedItem: feedItem1),
-                            createFeedItemJson(feedItem: feedItem2)]
+        let feedItem2 = FeedImage(id: UUID(), description: "description!!!!!", location: nil, url: URL(string: "https://google.com")!)
+        let arrayOfItems = [createFeedItemJson(feedImage: feedItem1),
+                            createFeedItemJson(feedImage: feedItem2)]
         
         expect(sut: sut,
                toCompleteWith: .success([feedItem1, feedItem2]),
@@ -100,7 +100,7 @@ class RemoteFeedLoaderTests: XCTestCase {
     }
     
     private func expect(sut: RemoteFeedLoader,
-                        toCompleteWith expectedResult: Result<[FeedItem], Error>,
+                        toCompleteWith expectedResult: Result<[FeedImage], Error>,
                         whenGiven action: () -> Void,
                         file: StaticString = #file,
                         line: UInt = #line) {
@@ -122,8 +122,8 @@ class RemoteFeedLoaderTests: XCTestCase {
         wait(for: [expect], timeout: 1)
     }
     
-    private func createFeedItemJson(feedItem: FeedItem) -> JSON {
-        let json: JSON = ["id": "\(feedItem.id.uuidString)", "image": "\(feedItem.imageURL.absoluteString)", "description": feedItem.description as Any, "location": feedItem.location as Any ]
+    private func createFeedItemJson(feedImage: FeedImage) -> JSON {
+        let json: JSON = ["id": "\(feedImage.id.uuidString)", "image": "\(feedImage.url.absoluteString)", "description": feedImage.description as Any, "location": feedImage.location as Any ]
         
         let goodJ: JSON = json.compactMapValues { value in
             
@@ -167,7 +167,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         }
     }
     
-    private func failure(_ error: RemoteFeedLoader.RemoteError) -> Result<[FeedItem], Error> {
+    private func failure(_ error: RemoteFeedLoader.RemoteError) -> Result<[FeedImage], Error> {
         return .failure(error)
         
     }

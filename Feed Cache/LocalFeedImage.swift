@@ -1,5 +1,5 @@
 //
-//  LocalFeedItem.swift
+//  LocalFeedImage.swift
 //  TryFramework
 //
 //  Created by Boaz Frenkel on 06/08/2021.
@@ -8,20 +8,20 @@
 
 import Foundation
 
-public class LocalFeedItem: Equatable {
-    public static func == (lhs: LocalFeedItem, rhs: LocalFeedItem) -> Bool {
+public class LocalFeedImage: Equatable {
+    public static func == (lhs: LocalFeedImage, rhs: LocalFeedImage) -> Bool {
         return lhs.id == rhs.id
     }
     
     public let id: UUID
     public let description: String?
     public let location: String?
-    public let imageURL: URL
+    public let url: URL
     
     public init(id: UUID, description: String?, location: String?, imageURL: URL) {
         self.id = id
         self.description = description
         self.location = location
-        self.imageURL = imageURL
+        self.url = imageURL
     }
 }
