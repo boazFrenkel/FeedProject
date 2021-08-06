@@ -9,7 +9,7 @@
 import Foundation
 
 public final class LocalFeedLoader {
-    public typealias SaveCompletion = (Error?) -> Void
+    public typealias SaveResult = (Error?) -> Void
     
     private let store: FeedStore
     private let currentDate: () -> Date
@@ -19,7 +19,7 @@ public final class LocalFeedLoader {
         self.currentDate = currentDate
     }
     
-    public func save(items: [FeedItem], completion: @escaping SaveCompletion) {
+    public func save(items: [FeedItem], completion: @escaping SaveResult) {
         store.deleteCachedFeed {[weak self] error in
             guard let self = self else { return }
             if let cacheDeletionError = error {
@@ -30,10 +30,16 @@ public final class LocalFeedLoader {
         }
     }
     
-    private func cache(_ items: [FeedItem], with completion: @escaping SaveCompletion) {
+    private func cache(_ items: [FeedItem], with completion: @escaping SaveResult) {
         self.store.inserItems(items: items.toLocale(), timestemp: self.currentDate()) {[weak self] error in
             if self == nil { return }
             completion(error)
         }
+    }
+}
+
+private extension Array where Element == FeedItem {
+    func toLocale() -> [LocalFeedItem] {
+        return map { LocalFeedItem(id: $0.id, description: $0.description, location: $0.location, imageURL: $0.imageURL)}
     }
 }

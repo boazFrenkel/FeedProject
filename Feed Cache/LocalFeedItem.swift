@@ -25,9 +25,3 @@ public class LocalFeedItem: Equatable {
         self.imageURL = imageURL
     }
 }
-
-extension Array where Element == FeedItem {
-    func toLocale() -> [LocalFeedItem] {
-        return map { LocalFeedItem(id: $0.id, description: $0.description, location: $0.location, imageURL: $0.imageURL)}
-    }
-}
