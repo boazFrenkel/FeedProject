@@ -8,7 +8,8 @@
 
 import Foundation
 
-public final class LocalFeedLoader {
+public final class LocalFeedLoader: FeedLoader {
+    
     public typealias SaveResult = (Error?) -> Void
     
     private let store: FeedStore
@@ -30,6 +31,19 @@ public final class LocalFeedLoader {
         }
     }
     
+    public func load(_ completion: @escaping (Result<[FeedImage], Error>) -> Void) {
+        
+        store.retrieve { result in
+            
+            switch result {
+            case .failure(let error):
+                completion(.failure(error))
+            case .success(let feed):
+                completion(.success(feed.toFeedImage()))
+            }
+        }
+    }
+    
     private func cache(_ items: [FeedImage], with completion: @escaping SaveResult) {
         self.store.insertFeed(items.toLocale(), timestemp: self.currentDate()) {[weak self] error in
             if self == nil { return }
@@ -41,5 +55,13 @@ public final class LocalFeedLoader {
 private extension Array where Element == FeedImage {
     func toLocale() -> [LocalFeedImage] {
         return map { LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, imageURL: $0.url)}
+    }
+    
+}
+
+private extension Array where Element == LocalFeedImage {
+    func toFeedImage() -> [FeedImage] {
+        return map { FeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url)
+        }
     }
 }
