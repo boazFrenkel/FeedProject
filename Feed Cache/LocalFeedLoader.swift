@@ -31,7 +31,7 @@ public final class LocalFeedLoader: FeedLoader {
         }
     }
     
-    public func load(_ completion: @escaping (Result<[FeedImage], Error>) -> Void) {
+    public func load(_ completion: @escaping (FeedLoader.Result) -> Void) {
         
         store.retrieve { result in
             
