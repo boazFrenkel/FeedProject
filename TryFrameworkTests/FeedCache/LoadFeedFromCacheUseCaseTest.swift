@@ -39,10 +39,31 @@ class LoadFeedFromCacheUseCaseTest: XCTestCase {
         }
     }
     
+    func test_load_deliversCachedImagesOnLessThenSevenDaysOldCache() {
+        let (sut, store) = makeSUT()
+        let fixedCurrentDate = Date()
+        let lessThanSevenDaysOldtimestamp = fixedCurrentDate.adding(days: 7).adding(seconds: 1)
+        let feed = uniqueImageFeed()
+        
+        expect(sut, toCompleteWith: .success(feed.models)) {
+            store.completeRetrieval(with: feed.local, timestamp: lessThanSevenDaysOldtimestamp)
+        }
+    }
+    
     // MARK: - Helpers
-    private func makeSUT(currentDate: @escaping () -> Date = Date.init, file: StaticString = #file, line: UInt = #line) -> (sut: LocalFeedLoader, store: FeedStoreSpy) {
+    private func uniqueImage() -> FeedImage {
+        return FeedImage(id: UUID(), description: "some description", location: "some location", url: anyURL())
+    }
+    
+    private func uniqueImageFeed() -> (models: [FeedImage], local: [LocalFeedImage]) {
+        let models = [uniqueImage(), uniqueImage()]
+        let local = models.map { LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, imageURL: $0.url)}
+        return (models, local)
+    }
+    
+    private func makeSUT(fixedCurrentDate: @escaping () -> Date = Date.init, file: StaticString = #file, line: UInt = #line) -> (sut: LocalFeedLoader, store: FeedStoreSpy) {
         let store = FeedStoreSpy()
-        let sut = LocalFeedLoader(store: store, currentDate: currentDate)
+        let sut = LocalFeedLoader(store: store, currentDate: fixedCurrentDate)
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(store, file: file, line: line)
         
@@ -66,5 +87,15 @@ class LoadFeedFromCacheUseCaseTest: XCTestCase {
         
         action()
         wait(for: [exp], timeout: 1.0)
+    }
+}
+
+private extension Date {
+    func adding(days: Int) -> Date {
+        return Calendar(identifier: .gregorian).date(byAdding: .day , value: days, to: self)!
+    }
+    
+    func adding(seconds: TimeInterval) -> Date {
+        return self + seconds
     }
 }

@@ -39,14 +39,16 @@ public final class LocalFeedLoader: FeedLoader {
             switch result {
             case .failure(let error):
                 completion(.failure(error))
-            case .success(let feed):
+            case .found(let feed, _):
                 completion(.success(feed.toFeedImage()))
+            case .empty:
+                completion(.success([]))
             }
         }
     }
     
     private func cache(_ items: [FeedImage], with completion: @escaping SaveResult) {
-        self.store.insertFeed(items.toLocale(), timestemp: self.currentDate()) {[weak self] error in
+        self.store.insertFeed(items.toLocale(), timestamp: self.currentDate()) {[weak self] error in
             if self == nil { return }
             completion(error)
         }
