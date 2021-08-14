@@ -11,6 +11,7 @@ import Foundation
 public final class LocalFeedLoader: FeedLoader {
     
     public typealias SaveResult = (Error?) -> Void
+    public typealias LoadResult = FeedLoader.Result
     
     private let store: FeedStore
     private let currentDate: () -> Date
@@ -31,7 +32,7 @@ public final class LocalFeedLoader: FeedLoader {
         }
     }
     
-    public func load(_ completion: @escaping (FeedLoader.Result) -> Void) {
+    public func load(_ completion: @escaping (LoadResult) -> Void) {
         
         store.retrieve { result in
             
